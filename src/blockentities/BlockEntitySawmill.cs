@@ -11,6 +11,9 @@ using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 using System.Reflection;
+using Vintagestory;
+using System.Runtime.CompilerServices;
+using Vintagestory.Common;
 
 namespace sawmill
 {
@@ -155,12 +158,15 @@ namespace sawmill
         {
             ItemStack outputStack = null;
             Object inDappledGrovesRecipe;
-            if (UsesIndappledGroves() && (inDappledGrovesRecipe = GetInDappledGrovesRecipe(InputInventory)) != null)
+
+            var block = InputInventory?.Itemstack?.Block;
+
+			if (UsesIndappledGroves() && (inDappledGrovesRecipe = GetInDappledGrovesRecipe(InputInventory)) != null)
             {
-                // InDappledGroves compatibility
-                outputStack = (ItemStack)inDappledGrovesRecipe.GetType().GetMethod("TryCraftNow").Invoke(inDappledGrovesRecipe, new object[] { Api, InputInventory });
+				// InDappledGroves compatibility
+				outputStack = (ItemStack)inDappledGrovesRecipe.GetType().GetMethod("TryCraftNow").Invoke(inDappledGrovesRecipe, new object[] { Api, InputInventory });
             }
-            else if (UsesImmersiveWoodSawing() && InputInventory?.Itemstack?.Block != null && GetImmersiveWoodSawingSawableBehavior(InputInventory.Itemstack.Block) != null)
+            else if (UsesImmersiveWoodSawing() && block != null && GetImmersiveWoodSawingSawableBehavior(block) != null)
             {
                 // ImmersiveWoodSawing compatibility
                 BlockBehavior sawableBehavior = GetImmersiveWoodSawingSawableBehavior(InputInventory.Itemstack.Block);
@@ -291,6 +297,11 @@ namespace sawmill
 
         private static BlockBehavior GetImmersiveWoodSawingSawableBehavior(Block block)
         {
+            // This additional null check seems unnecessary, but it isn't.
+            if (block == null)
+            {
+                return null;
+            }
             return block.BlockBehaviors.FirstOrDefault(behavior => behavior.GetType().Name.Equals("BlockBehaviorSawable"), null);
         }
 
