@@ -1,6 +1,5 @@
 *.dll
 *.pdb
-*.csproj
 /bin/Release/Mods/mod/publish
 /bin/Release/Mods/mod
 /bin/Debug/Mods/mod
