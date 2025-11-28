@@ -76,6 +76,12 @@ namespace sawmill
             UpdateLightAndTransformMatrix(matrixAndLightFloatsCrank[material].Values, quantityCranks[material], distToCamera, dev.LightRgba, rotX, rotZ, axisCenter, new Vec3f());
             quantityCranks[material]++;
             BEBehaviorMPSliderCrank devSliderCrank = dev as BEBehaviorMPSliderCrank;
+
+            if (devSliderCrank == null || devSliderCrank.entity == null)
+            {
+                return;
+            }
+
             if (devSliderCrank.entity.NeedsPistonSupport())
             {
                 Vec3f pinPosition = GetPinPosition(dev.AngleRad, axX, axZ);
